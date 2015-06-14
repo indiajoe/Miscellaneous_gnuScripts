@@ -27,7 +27,12 @@ function check_status(){
 
 function repair_link() {
     # Repairs broken symolick link by correcting to new location
-    echo "Not implemented yet $1"
+    read Link Path UUID DiskName <<< $1 
+    TargetLocation=$(grep $(readlink -f /dev/disk/by-uuid/$UUID) /etc/mtab | cut -d' ' -f2)"/$Path"
+    if [ -e "$TargetLocation" ] ; then # File exists, Repairable
+	echo "Updating the symlink $Link to $TargetLocation .."
+	ln --backup -sn "$TargetLocation" "$Link"
+    fi
 }
 #while :
 #do
