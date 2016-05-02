@@ -3,7 +3,7 @@
 
 declare -a DirectoriesToBackup=("/home/joe/Research" 
 "/home/joe/zotero"
-"/home/joe/Github"
+"/home/joe/GitHub"
 "/home/joe/ImportantFiles"
 "/home/joe/ConfSchoolWorkshops"
 "/home/joe/PD_applications"
@@ -25,10 +25,29 @@ fi
 
 BackupDestination="$DestinationHdisk"/Backup/
 
+FailedDirs=""
 
+#Do copying one directory at a time
 for dir in "${DirectoriesToBackup[@]}"; do
+    echo
     echo "|> Backing up $dir to $BackupDestination"
     rsync -av "$dir" "$BackupDestination"
+    if [ $? -ne 0 ]; then
+	echo -e "\e[1;31m ERROR >>> Backup of $dir Failed ************ \e[0m"
+	FailedDirs="$FailedDirs"" | $dir |"
+    fi
 done
 
+
+# Report summary of success
+if [[ -z "$FailedDirs" ]]; then
+    echo "All Directories Backedup successfully."
+    exit 0
+else
+    echo " ************************************"
+    echo -e "\e[1;31m WARNING >>> Failed to Backup following directories \e[0m"
+    echo -e "\e[1;31m $FailedDirs \e[0m"
+    echo " ************************************"
+    exit 1
+fi
     
