@@ -15,7 +15,14 @@ declare -a DirectoriesToBackup=("/home/joe/Research"
 # findmnt -n -o TARGET /dev/disk/by-uuid/b4f4662d-eca1-4698-8d1b-802226f6939b
 # Else provide the directory path to destination below
 
-DestinationHdisk=$(findmnt -n -o TARGET /dev/disk/by-uuid/b4f4662d-eca1-4698-8d1b-802226f6939b)
+if [ $# -eq 0 ]; then
+    # No arguments provided
+    DestinationHdisk=$(findmnt -n -o TARGET /dev/disk/by-uuid/b4f4662d-eca1-4698-8d1b-802226f6939b)
+else
+    # Use the first argument as the path to backup location
+    DestinationHdisk="$1"
+fi
+
 if [[ -z "$DestinationHdisk" ]]; then
     echo "Destination Hardisk not mounted.."
     echo "Please mount the destination to backup."
